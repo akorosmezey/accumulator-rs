@@ -1,4 +1,7 @@
-use crate::{accumulator::Accumulator, b2fa, nonwitness::NonMembershipWitness, Poke2Proof, FACTOR_SIZE, MEMBER_SIZE};
+use crate::{
+    accumulator::Accumulator, b2fa, witnessnon::NonMembershipWitness, Poke2Proof, FACTOR_SIZE,
+    MEMBER_SIZE,
+};
 use common::{bigint::BigInteger, error::*, Field};
 use std::convert::TryFrom;
 

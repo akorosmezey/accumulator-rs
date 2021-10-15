@@ -26,14 +26,15 @@ pub mod hash;
 /// Provides an accumulator secret factors
 pub mod key;
 /// Proofs of set membership
-pub mod memproof;
+pub mod proofmem;
 /// Proofs of set non-membership
-pub mod nonmemproof;
-/// Provides non-membership witness methods
-pub mod nonwitness;
+pub mod proofnon;
 /// Provides witness methods
-pub mod memwitness;
+pub mod witnessmem;
+/// Provides non-membership witness methods
+pub mod witnessnon;
 
+use crate::hash::hash_to_generator;
 use crate::hash::hash_to_prime;
 use blake2::{digest::Digest, Blake2b};
 use common::{
@@ -41,7 +42,6 @@ use common::{
     error::{AccumulatorError, AccumulatorErrorKind},
 };
 use std::convert::TryFrom;
-use crate::hash::hash_to_generator;
 
 /// Convenience module to include when using
 pub mod prelude {
@@ -52,10 +52,10 @@ pub mod prelude {
             error::*,
         },
         key::AccumulatorSecretKey,
-        memproof::MembershipProof,
-        memwitness::MembershipWitness,
-        nonmemproof::NonMembershipProof,
-        nonwitness::NonMembershipWitness,
+        proofmem::MembershipProof,
+        proofnon::NonMembershipProof,
+        witnessmem::MembershipWitness,
+        witnessnon::NonMembershipWitness,
     };
 }
 
@@ -65,13 +65,20 @@ pub(crate) fn b2fa(b: &BigInteger, expected_size: usize) -> Vec<u8> {
     let bt = b.to_bytes();
     assert!(
         expected_size >= bt.len(),
-        format!("expected = {}, found = {}", expected_size, bt.len())
+        "expected = {}, found = {}",
+        expected_size,
+        bt.len()
     );
     t[(expected_size - bt.len())..].clone_from_slice(bt.as_slice());
     t
 }
 
-pub(crate) fn hashed_generator<B: AsRef<[u8]>>(u: &BigInteger, a: &BigInteger, n: &BigInteger, nonce: B) -> BigInteger {
+pub(crate) fn hashed_generator<B: AsRef<[u8]>>(
+    u: &BigInteger,
+    a: &BigInteger,
+    n: &BigInteger,
+    nonce: B,
+) -> BigInteger {
     let mut transcript = u.to_bytes();
     transcript.append(&mut a.to_bytes());
     transcript.extend_from_slice(nonce.as_ref());

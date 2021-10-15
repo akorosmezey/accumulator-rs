@@ -1,4 +1,6 @@
-use crate::{accumulator::Accumulator, common::error::*, memwitness::MembershipWitness, Poke2Proof};
+use crate::{
+    accumulator::Accumulator, common::error::*, witnessmem::MembershipWitness, Poke2Proof,
+};
 use std::convert::TryFrom;
 
 /// A proof of knowledge of exponents membership proof
